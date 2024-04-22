@@ -1,5 +1,5 @@
-from keras.layers.core import Dense, Activation, Dropout
-from keras.layers.recurrent import LSTM
+from keras.layers import Dense, Activation, Dropout
+from keras.layers import LSTM
 from keras.layers import Bidirectional
 import keras.layers as layers
 from keras.models import Sequential
@@ -74,30 +74,28 @@ def get_all_txt_paths(master_folder):
 ################ data processing ##################
 ###################################################
 
-#get the pickle file for the word2vec so you don't have to load the entire huge file each time
+# get the pickle file for the word2vec so you don't have to load the entire huge file each time
 def gen_vocab_dicts(folder, output_pickle_path, huge_word2vec):
-
     vocab = set()
-    text_embeddings = open(huge_word2vec, 'r').readlines()
+    text_embeddings = open(huge_word2vec, 'r', encoding="utf-8").readlines()
     word2vec = {}
 
-    #get all the vocab
+    # get all the vocab
     all_txt_paths = get_all_txt_paths(folder)
     print(all_txt_paths)
 
-    #loop through each text file
+    # loop through each text file
     for txt_path in all_txt_paths:
+        # get all the words
+        try:
+            all_lines = open(txt_path, "r").readlines()
+            for line in all_lines:
+                words = line[:-1].split(' ')
+                for word in words:
+                    vocab.add(word)
+        except FileNotFoundError:
+            print(txt_path, "not found")
 
-    	# get all the words
-    	try:
-    		all_lines = open(txt_path, "r").readlines()
-    		for line in all_lines:
-    			words = line[:-1].split(' ')
-    			for word in words:
-    			    vocab.add(word)
-    	except:
-    		print(txt_path, "has an error")
-    
     print(len(vocab), "unique words found")
 
     # load the word embeddings, and only add the word to the dictionary if we need it
@@ -106,9 +104,9 @@ def gen_vocab_dicts(folder, output_pickle_path, huge_word2vec):
         word = items[0]
         if word in vocab:
             vec = items[1:]
-            word2vec[word] = np.asarray(vec, dtype = 'float32')
+            word2vec[word] = np.asarray(vec, dtype='float32')
     print(len(word2vec), "matches between unique words and word2vec dictionary")
-        
+
     pickle.dump(word2vec, open(output_pickle_path, 'wb'))
     print("dictionaries outputted to", output_pickle_path)
 
@@ -159,16 +157,15 @@ def gen_tsne_aug(train_orig, output_file):
     writer = open(output_file, 'w')
     lines = open(train_orig, 'r').readlines()
     for i, line in enumerate(lines):
-    	parts = line[:-1].split('\t')
-    	label = parts[0]
-    	sentence = parts[1]
-    	writer.write(line)
-    	for alpha in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
-    		aug_sentence = eda_4(sentence, alpha_sr=alpha, alpha_ri=alpha, alpha_rs=alpha, p_rd=alpha, num_aug=2)[0]
-    		writer.write(label + "\t" + aug_sentence + '\n')
+        parts = line[:-1].split('\t')
+        label = parts[0]
+        sentence = parts[1]
+        writer.write(line)
+        for alpha in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]:
+            aug_sentence = eda_4(sentence, alpha_sr=alpha, alpha_ri=alpha, alpha_rs=alpha, p_rd=alpha, num_aug=2)[0]
+            writer.write(label + "\t" + aug_sentence + '\n')
     writer.close()
     print("finished eda for tsne for", train_orig, "to", output_file)
-
 
 
 
@@ -188,7 +185,7 @@ def gen_standard_aug(train_orig, output_file, num_aug=9):
 
 #generate more data with only synonym replacement (SR)
 def gen_sr_aug(train_orig, output_file, alpha_sr, n_aug):
-    writer = open(output_file, 'w')
+    writer = open(output_file, 'w+')
     lines = open(train_orig, 'r').readlines()
     for i, line in enumerate(lines):
         parts = line[:-1].split('\t')
@@ -202,7 +199,7 @@ def gen_sr_aug(train_orig, output_file, alpha_sr, n_aug):
 
 #generate more data with only random insertion (RI)
 def gen_ri_aug(train_orig, output_file, alpha_ri, n_aug):
-    writer = open(output_file, 'w')
+    writer = open(output_file, 'w+')
     lines = open(train_orig, 'r').readlines()
     for i, line in enumerate(lines):
         parts = line[:-1].split('\t')
@@ -216,7 +213,7 @@ def gen_ri_aug(train_orig, output_file, alpha_ri, n_aug):
 
 #generate more data with only random swap (RS)
 def gen_rs_aug(train_orig, output_file, alpha_rs, n_aug):
-    writer = open(output_file, 'w')
+    writer = open(output_file, 'w+')
     lines = open(train_orig, 'r').readlines()
     for i, line in enumerate(lines):
         parts = line[:-1].split('\t')
@@ -230,7 +227,7 @@ def gen_rs_aug(train_orig, output_file, alpha_rs, n_aug):
 
 #generate more data with only random deletion (RD)
 def gen_rd_aug(train_orig, output_file, alpha_rd, n_aug):
-    writer = open(output_file, 'w')
+    writer = open(output_file, 'w+')
     lines = open(train_orig, 'r').readlines()
     for i, line in enumerate(lines):
         parts = line[:-1].split('\t')
@@ -276,6 +273,9 @@ def one_hot_to_categorical(y):
     assert len(y.shape) == 2
     return np.argmax(y, axis=1)
 
+# def get_now_str():
+#     return str(strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
+
 def get_now_str():
-    return str(strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
+    return str(strftime("%Y-%m-%d_%H-%M-%S", gmtime()))
 

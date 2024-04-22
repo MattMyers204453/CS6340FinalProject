@@ -35,5 +35,5 @@ if __name__ == "__main__":
 
 				#generate the vocab dictionary
 				word2vec_pickle = dataset_folder + '/word2vec.p'
-				gen_vocab_dicts(dataset_folder, word2vec_pickle, huge_word2vec)
+				# gen_vocab_dicts(dataset_folder, word2vec_pickle, huge_word2vec)
 			

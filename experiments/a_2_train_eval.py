@@ -19,10 +19,12 @@ def run_cnn(train_file, test_file, num_classes, percent_dataset):
 	#implement early stopping
 	callbacks = [EarlyStopping(monitor='val_loss', patience=3)]
 
+	print('training model')
 	#train model
 	model.fit(	train_x, 
 				train_y, 
-				epochs=100000, 
+				#epochs=100000, 
+				epochs=10,
 				callbacks=callbacks,
 				validation_split=0.1, 
 				batch_size=1024, 
@@ -42,7 +44,7 @@ def run_cnn(train_file, test_file, num_classes, percent_dataset):
 	gc.collect()
 
 	#return the accuracy
-	#print("data with shape:", train_x.shape, train_y.shape, 'train=', train_file, 'test=', test_file, 'with fraction', percent_dataset, 'had acc', acc)
+	# print("data with shape:", train_x.shape, train_y.shape, 'train=', train_file, 'test=', test_file, 'with fraction', percent_dataset, 'had acc', acc)
 	return acc
 
 ###############################
@@ -76,13 +78,16 @@ if __name__ == "__main__":
 				num_classes = num_classes_list[i]
 				input_size = input_size_list[i]
 				word2vec_pickle = dataset_folder + '/word2vec.p'
+				print('load pickle')
 				word2vec = load_pickle(word2vec_pickle)
 
 				#test each alpha value
 				for alpha in alphas:
-
-					train_path = dataset_folder + '/train_' + a_method + '_' + str(alpha) + '.txt'
+					train_path = dataset_folder + '/train_orig.txt'
+					# train_path = dataset_folder + '/train_' + a_method + '_' + str(alpha) + '.txt'
 					test_path = 'size_data_f1/test/' + dataset + '/test.txt'
+					print(test_path)
+					print("run_cnn")
 					acc = run_cnn(train_path, test_path, num_classes, percent_dataset=1)
 					performances[alpha].append(acc)
 

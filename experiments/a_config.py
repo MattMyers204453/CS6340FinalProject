@@ -1,17 +1,20 @@
 #user inputs
 
 #size folders
-sizes = ['1_tiny', '2_small', '3_standard', '4_full']
+# sizes = ['1_tiny', '2_small', '3_standard', '4_full']
+sizes = ['2_small']
 size_folders = ['size_data_f1/' + size for size in sizes]
 
 #augmentation methods
 a_methods = ['sr', 'ri', 'rd', 'rs']
 
 #dataset folder
-datasets = ['cr', 'sst2', 'subj', 'trec', 'pc']
+# datasets = ['cr', 'sst2', 'subj', 'trec', 'pc']
+datasets = ['sst2']
 
 #number of output classes
-num_classes_list = [2, 2, 2, 6, 2]
+# num_classes_list = [2, 2, 2, 6, 2]
+num_classes_list = [2]
 
 #number of augmentations
 n_aug_list_dict = {'size_data_f1/1_tiny': [16, 16, 16, 16, 16], 
@@ -20,8 +23,8 @@ n_aug_list_dict = {'size_data_f1/1_tiny': [16, 16, 16, 16, 16],
 					'size_data_f1/4_full': [8, 8, 8, 8, 4]}
 
 #alpha values we care about
-alphas = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
-
+# alphas = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+alphas = [0.2]
 #number of words for input
 input_size_list = [50, 50, 40, 25, 25] 
 
